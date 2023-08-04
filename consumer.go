@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"idempotency/model"
 	"log"
 	"sync"
@@ -168,6 +169,10 @@ func upsertProductConsumer(m *sync.RWMutex, ch *amqp.Channel, queueName string, 
 				delivery.Ack(false)
 				continue
 			}
+
+			// remove duplicates
+			products := unique(body.Products)
+			fmt.Println(products)
 
 			// log.Printf("Consumer %v received a message: %v", consumerName, body)
 			time.Sleep(3 * time.Second)
